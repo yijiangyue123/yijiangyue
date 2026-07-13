@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>依江月 · 新类目产品展示</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --primary:#1a1a2e;
+  --accent:#ff6b00;
+  --bg:#f5f5f5;
+  --card-bg:#fff;
+  --text:#333;
+  --muted:#888;
+  --radius:12px;
+}
+body { font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+
+/* Header */
+.header {
+  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
+  color:#fff; padding:40px 20px 30px; text-align:center;
+}
+.header h1 { font-size:28px; margin-bottom:8px; letter-spacing:2px; }
+.header .subtitle { font-size:14px; opacity:0.7; }
+.header .contact { margin-top:12px; font-size:13px; opacity:0.6; }
+
+/* Filter Bar */
+.filter-bar {
+  position:sticky; top:0; z-index:50;
+  background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  padding:16px 20px;
+}
+.category-tabs { display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+.cat-btn {
+  padding:8px 20px; border:2px solid #1a1a2e; background:#fff;
+  color:#1a1a2e; border-radius:25px; cursor:pointer; font-size:14px;
+  transition:all 0.25s; font-weight:600;
+}
+.cat-btn:hover { background:#1a1a2e; color:#fff; }
+.cat-btn.active { background:#1a1a2e; color:#fff; }
+
+.tag-filters { display:flex; gap:8px; flex-wrap:wrap; }
+.filter-tag {
+  padding:5px 14px; border:1px solid #ddd; background:#f9f9f9;
+  color:#666; border-radius:20px; cursor:pointer; font-size:12px;
+  transition:all 0.2s;
+}
+.filter-tag:hover { border-color:var(--accent); color:var(--accent); }
+.filter-tag.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* Grid */
+.container { max-width:1200px; margin:0 auto; padding:24px 16px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
+
+.card {
+  background:var(--card-bg); border-radius:var(--radius); overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08); cursor:pointer;
+  transition:transform 0.25s,box-shadow 0.25s;
+}
+.card:hover { transform:translateY(-4px); box-shadow:0 8px 28px rgba(0,0,0,0.15); }
+.card-img-wrap { width:100%; aspect-ratio:16/9; overflow:hidden; background:#eee; }
+.card-img-wrap img { width:100%; height:100%; object-fit:cover; transition:transform 0.3s; }
+.card:hover .card-img-wrap img { transform:scale(1.05); }
+.card-body { padding:16px; }
+.card-category {
+  display:inline-block; font-size:11px; color:var(--accent);
+  font-weight:700; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:6px;
+}
+.card-title { font-size:18px; font-weight:700; margin-bottom:8px; }
+.card-desc { font-size:13px; color:var(--muted); margin-bottom:12px; display:-webkit-box;
+  -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.card-tags { display:flex; gap:6px; flex-wrap:wrap; }
+.tag {
+  font-size:11px; padding:3px 10px; background:#f0f0f0;
+  border-radius:12px; color:#666;
+}
+
+/* Modal */
+.modal-overlay {
+  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.85); z-index:200; justify-content:center; align-items:center;
+  padding:20px;
+}
+.modal-overlay.show { display:flex; }
+.modal-content {
+  background:#fff; border-radius:var(--radius); max-width:900px; width:100%;
+  max-height:90vh; overflow-y:auto; position:relative;
+}
+.modal-close {
+  position:absolute; top:12px; right:16px; font-size:28px; color:#fff;
+  background:rgba(0,0,0,0.5); border-radius:50%; width:36px; height:36px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  z-index:10; border:none;
+}
+.modal-img { width:100%; display:block; border-radius:var(--radius) var(--radius) 0 0; }
+.modal-info { padding:20px; }
+.modal-info h2 { font-size:22px; margin-bottom:8px; }
+.modal-info .modal-cat { color:var(--accent); font-size:13px; font-weight:700; margin-bottom:8px; }
+.modal-info p { color:var(--muted); font-size:14px; margin-bottom:12px; }
+
+/* Empty state */
+.empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+.empty-state h3 { font-size:18px; margin-bottom:8px; }
+
+/* Footer */
+.footer { text-align:center; padding:30px 20px; color:var(--muted); font-size:13px; }
+
+/* Result count */
+.result-count { margin-bottom:16px; font-size:13px; color:var(--muted); }
+
+@media (max-width:600px) {
+  .grid { grid-template-columns:1fr; }
+  .header h1 { font-size:22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>依江月 · 新类目产品展示</h1>
+  <div class="subtitle">男士工装裤 / 男士新奇长裤 全品类视觉指南</div>
+  <div class="contact">VX：Withx_yjy</div>
+</div>
+
+<div class="filter-bar">
+  <div class="category-tabs">
+    <button class="cat-btn active" data-cat="全部">全部类目</button>
+    <button class="cat-btn" data-cat="男士工装裤">男士工装裤</button>
+    <button class="cat-btn" data-cat="男士新奇长裤">男士新奇长裤</button>
+  </div>
+  <div class="tag-filters" id="tag-filters">
+    <button class="filter-tag active" data-tag="全部">全部</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="result-count" id="result-count">共 17 个类目</div>
+  <div class="grid" id="grid"></div>
+  <div class="empty-state" id="empty-state" style="display:none;">
+    <h3>暂无匹配结果</h3>
+    <p>试试选择其他筛选条件</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <img class="modal-img" id="modal-img" src="" alt="" />
+    <div class="modal-info">
+      <div class="modal-cat" id="modal-cat"></div>
+      <h2 id="modal-title"></h2>
+      <p id="modal-desc"></p>
+      <div class="card-tags" id="modal-tags"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  依江月新类目产品展示 · VX：Withx_yjy
+</div>
+
+<script>
+var slidesData = [
+  {num:1, category:"男士工装裤", title:"产品总览", tags:["街头工装风","户外机能风","面料材质","版型设计"], desc:"工装裤全品类概览，涵盖街头工装、户外机能风格，展示斜纹棉布/帆布、防撕裂面料、尼龙等材质，以及量感堆叠、街潮装饰等版型设计"},
+  {num:2, category:"男士工装裤", title:"畅销视觉场景", tags:["城市街头","简约室内","棚拍"], desc:"畅销视觉场景应用，包括城市街头（咖啡店等）、简约室内（黑白灰）、专业棚拍三种拍摄风格"},
+  {num:3, category:"男士工装裤", title:"水泥工业风场景", tags:["水泥工业风","砖墙工业风","涂鸦墙背景"], desc:"工业风场景搭配展示，涵盖水泥建筑、红砖墙、涂鸦艺术墙等硬朗工业环境穿搭"},
+  {num:4, category:"男士工装裤", title:"户外自然场景", tags:["荒野岩石","山林草原","户外工作"], desc:"户外自然环境场景搭配，包括岩石地形、山林草原等户外工作场景"},
+  {num:5, category:"男士工装裤", title:"俯拍与其他视角", tags:["俯拍","滑板","室内"], desc:"特殊拍摄角度展示，包括俯拍滑板运动场景和室内日常穿搭"},
+  {num:6, category:"男士工装裤", title:"战术裤", tags:["战术裤","软壳工装","多储物空间","脚口设计"], desc:"军事风格战术裤，软壳工装面料，11个口袋多储物空间设计，脚口系带和拉链调节细节"},
+  {num:7, category:"男士工装裤", title:"防撕裂面料", tags:["防撕裂面料","材质工艺"], desc:"防撕裂面料科技展示，卡其色、深蓝色、军绿色等多种颜色的面料纹理特写"},
+  {num:8, category:"男士工装裤", title:"常规休闲", tags:["木桶裤","轻量尼龙","膝部显褶","休闲"], desc:"日常休闲工装裤，包括木桶裤（宽松直筒）、轻量尼龙（夏季轻便）、膝部显褶（抽绳可调节裤长）三种款式"},
+  {num:9, category:"男士工装裤", title:"户外风采", tags:["迷彩","枯叶图案","户外"], desc:"迷彩与户外图案系列，涵盖斑马纹、斑点迷彩、丛林迷彩、沙漠迷彩等多种图案"},
+  {num:10, category:"男士工装裤", title:"装饰叠加", tags:["线迹装饰","拉链装饰","按扣装饰"], desc:"装饰细节与时尚元素，包括白色缝线线迹装饰和侧边拉链/按扣装饰"},
+  {num:11, category:"男士工装裤", title:"绳带赋能", tags:["绳带设计","抽绳","多口袋","束脚"], desc:"绳带元素工装裤，强调抽绳、腰带设计，多口袋和束脚裤型，街头潮流与工装机能风"},
+  {num:12, category:"男士工装裤", title:"前卫机能", tags:["前卫机能","夸张口袋","潮流压褶"], desc:"前卫机能风工装裤，夸张口袋设计和潮流压褶裤型，机能风与街头潮流结合"},
+  {num:13, category:"男士新奇长裤", title:"海洋动物图案", tags:["海洋动物","扎染","度假风"], desc:"印有海龟、水母、章鱼等海洋生物图案的宽松长裤，以及扎染风格款式，度假海滩风"},
+  {num:14, category:"男士新奇长裤", title:"植物花卉图案", tags:["植物花卉","热带植物","度假风"], desc:"印有热带植物、花卉图案的宽松长裤，弹性腰头设计，适合海滩度假场景"},
+  {num:15, category:"男士新奇长裤", title:"几何/民族图案", tags:["几何图案","民族图案","波西米亚"], desc:"几何条纹、民族图腾、部落花纹等图案长裤，含畅销款，民族风与波西米亚风格"},
+  {num:16, category:"男士新奇长裤", title:"皮裤/裙裤/背带裤", tags:["皮裤","裙裤","瑜伽裤","背带裤"], desc:"多款式长裤展示：鳄鱼纹皮裤、抽绳裙裤、宽松瑜伽裤、工装背带裤等多种材质和剪裁"},
+  {num:17, category:"男士新奇长裤", title:"印花图案裤", tags:["文字印花","人像印花","抽象图案","骷髅图案"], desc:"印花图案设计长裤，包括文字涂鸦印花、人像印花、彩色抽象图案、红色骷髅头、迷彩等个性化设计"}
+];
+
+var currentCategory = "全部";
+var currentTag = "全部";
+
+// Build tag filter buttons
+(function buildTagFilters() {
+  var allTags = {};
+  slidesData.forEach(function(s) {
+    s.tags.forEach(function(t) { allTags[t] = true; });
+  });
+  var container = document.getElementById('tag-filters');
+  Object.keys(allTags).sort().forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'filter-tag';
+    btn.dataset.tag = t;
+    btn.textContent = t;
+    container.appendChild(btn);
+  });
+})();
+
+// Build cards
+function buildCards() {
+  var grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  slidesData.forEach(function(s) {
+    var numStr = s.num < 10 ? '0' + s.num : '' + s.num;
+    var tagsHtml = s.tags.map(function(t) {
+      return '<span class="tag">' + t + '</span>';
+    }).join('');
+    
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.category = s.category;
+    card.dataset.tags = s.tags.join('|');
+    card.onclick = function() { openModal(s.num); };
+    card.innerHTML =
+      '<div class="card-img-wrap">' +
+        '<img src="images/slide-' + numStr + '.png" alt="' + s.title + '" loading="lazy" />' +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div class="card-category">' + s.category + '</div>' +
+        '<h3 class="card-title">' + s.title + '</h3>' +
+        '<p class="card-desc">' + s.desc + '</p>' +
+        '<div class="card-tags">' + tagsHtml + '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function applyFilter() {
+  var cards = document.querySelectorAll('.card');
+  var visibleCount = 0;
+  cards.forEach(function(card) {
+    var cat = card.dataset.category;
+    var tags = card.dataset.tags.split('|');
+    var catMatch = (currentCategory === "全部" || cat === currentCategory);
+    var tagMatch = (currentTag === "全部" || tags.indexOf(currentTag) !== -1);
+    if (catMatch && tagMatch) {
+      card.style.display = '';
+      visibleCount++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  document.getElementById('result-count').textContent = '共 ' + visibleCount + ' 个类目';
+  document.getElementById('empty-state').style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+document.querySelectorAll('.cat-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    currentCategory = this.dataset.cat;
+    applyFilter();
+  });
+});
+
+document.getElementById('tag-filters').addEventListener('click', function(e) {
+  if (e.target.classList.contains('filter-tag')) {
+    document.querySelectorAll('.filter-tag').forEach(function(b) { b.classList.remove('active'); });
+    e.target.classList.add('active');
+    currentTag = e.target.dataset.tag;
+    applyFilter();
+  }
+});
+
+function openModal(num) {
+  var data = slidesData.find(function(s) { return s.num === num; });
+  if (!data) return;
+  var numStr = num < 10 ? '0' + num : '' + num;
+  document.getElementById('modal-img').src = 'images/slide-' + numStr + '.png';
+  document.getElementById('modal-img').alt = data.title;
+  document.getElementById('modal-cat').textContent = data.category;
+  document.getElementById('modal-title').textContent = data.title;
+  document.getElementById('modal-desc').textContent = data.desc;
+  var tagsHtml = data.tags.map(function(t) {
+    return '<span class="tag">' + t + '</span>';
+  }).join('');
+  document.getElementById('modal-tags').innerHTML = tagsHtml;
+  document.getElementById('modal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal')) return;
+  document.getElementById('modal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Init
+buildCards();
+applyFilter();
+</script>
+
+</body>
+</html>
